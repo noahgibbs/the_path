@@ -7,6 +7,7 @@ module ThePath
         # This isn't necessarily all MailChimp fields. Just the ones the_path is willing to look at.
         LIST_FIELDS = [:id, :web_id, :name, :contact, :permission_reminder, :use_archive_bar, :campaign_defaults, :notify_on_subscribe, :notify_on_unsubscribe, :date_created, :list_rating, :email_type_option, :subscribe_url_short, :subscribe_url_long, :beamer_address, :visibility, :double_optin, :has_welcome, :marketing_permissions, :modules, :stats]
         MEMBER_FIELDS = [:id, :email_address, :unique_email_id, :email_type, :status, :merge_fields, :interests, :stats, :ip_signup, :timestamp_signup, :ip_opt, :timestamp_opt, :member_rating, :last_changed, :language, :vip, :email_client, :location, :tags_count, :tags]
+        CAMPAIGN_FIELDS = [:id, :web_id, :type, :create_time, :archive_url, :long_archive_url, :status, :emails_sent, :send_time, :content_type, :needs_block_refresh, :has_logo_merge_tag, :resendable, :recipients, :settings, :tracking, :report_summary, :delivery_status]
 
         def initialize(repo_path:, freshness: 15 * 60)
             @freshness = freshness
@@ -17,6 +18,10 @@ module ThePath
                 list_data = fully_load(proc { gibbon_client.lists }, :lists)
 
                 lists = list_data.map { |item| item.slice(*LIST_FIELDS) }
+                possibly_typos = LIST_FIELDS - lists[0].keys
+                unless possibly_typos.empty?
+                    STDERR.puts "May have a typo in field: #{possibly_typos.inspect} for lists"
+                end
 
                 lists.each do |list|
                     list_id = list[:id]
@@ -25,13 +30,28 @@ module ThePath
                     @cached_resources["list_#{list_id}/members"] = proc do
                         members_data = fully_load(proc { gibbon_client.lists(list_id).members }, :members)
                         members_data.map { |item| item.slice(*MEMBER_FIELDS) }
-                        #members_data
+                        possibly_typos = MEMBER_FIELDS - members_data[0].keys
+                        unless possibly_typos.empty?
+                            STDERR.puts "May have a typo in field: #{possibly_typos.inspect} for members"
+                        end
+                        members_data
                     end
                 end
 
                 lists
             end
 
+            @cached_resources["campaigns"] = proc do
+                campaign_data = fully_load(proc { gibbon_client.campaigns }, :campaigns)
+
+                campaigns = campaign_data.map { |item| item.slice(*CAMPAIGN_FIELDS) }
+                possibly_typos = CAMPAIGN_FIELDS - campaigns[0].keys
+                unless possibly_typos.empty?
+                    STDERR.puts "May have a typo in field: #{possibly_typos.inspect} for campaigns"
+                end
+
+                campaigns
+            end
         end
 
         # Create and return a Gibbon API client object
