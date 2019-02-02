@@ -17,8 +17,12 @@ unless File.directory?(repo_dir)
     raise "Also, THE_PATH_DATA_REPO must actually exist. Does making it yourself seem inconvenient? Good, we're on the same page."
 end
 
-impl = ThePath::MailChimpImpl.new(repo_path: repo_dir)
+impl = ThePath::MailChimpImpl.new(repo_path: repo_dir, freshness: 1)
 
-lists = impl.dump_file_data("lists", freshness: 1)
+# This will do The Big Load and leave everything in the repo dir.
+impl.load_all_resources
 
-STDERR.puts "Lists:\n#{lists.inspect}"
+#lists = impl.dump_file_data("lists", freshness: 1)
+#STDERR.puts "Lists:\n#{lists.inspect}"
+
+STDERR.puts "Known: #{impl.known_resources.inspect}"
