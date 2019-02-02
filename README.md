@@ -22,7 +22,13 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Initially, the_path is only compatible with MailChimp.
+
+Set up your MailChimp API key in an environment variable:
+
+    export MAILCHIMP_API_KEY=ffffffffeeeeeeffffffccccccccdddd-us2
+
+You can find your API key here if you have a MailChimp account: http://admin.mailchimp.com/account/api
 
 ## Development
 

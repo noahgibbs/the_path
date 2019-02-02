@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+
+# This is a low-level script designed to dump MailChimp info into a local repository of JSON files. It's like an ETL
+# script, if the ETL script was flaky and the database was JSON files.
+
+# The idea is that this will be replaced with something sane later which will provide the data in a more reasonable form.
+
+require "the_path"
+require "json"
+
+unless ENV['THE_PATH_DATA_REPO']
+    raise "Set the THE_PATH_DATA_REPO environment variable to a local directory somewhere if you *must* use this ugly, low-level script to dump MailChimp data."
+end
+
+repo_dir = ENV['THE_PATH_DATA_REPO']
+unless File.directory?(repo_dir)
+    raise "Also, THE_PATH_DATA_REPO must actually exist. Does making it yourself seem inconvenient? Good, we're on the same page."
+end
+
+impl = ThePath::MailChimpImpl.new(repo_path: repo_dir)
+
+lists = impl.dump_file_data("lists", freshness: 1)
+
+STDERR.puts "Lists:\n#{lists.inspect}"
