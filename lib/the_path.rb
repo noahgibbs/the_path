@@ -71,9 +71,11 @@ module ThePath
                     @cached_resources["campaign_#{campaign_id}/click_details"] = proc do
                         click_details_data = fully_load(proc { gibbon_client.reports(campaign_id).click_details }, :urls_clicked)
                         click_details_data = click_details_data.map { |item| item.slice(*CLICK_DETAILS_FIELDS) }
-                        possibly_typos = CLICK_DETAILS_FIELDS - click_details_data[0].keys
-                        unless possibly_typos.empty?
-                            STDERR.puts "May have a typo in field: #{possibly_typos.inspect} for members"
+                        if click_details_data.size > 0
+                            possibly_typos = CLICK_DETAILS_FIELDS - click_details_data[0].keys
+                            unless possibly_typos.empty?
+                                STDERR.puts "May have a typo in field: #{possibly_typos.inspect} for members"
+                            end
                         end
                         click_details_data
                     end

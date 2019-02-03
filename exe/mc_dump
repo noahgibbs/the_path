@@ -20,7 +20,8 @@ end
 impl = ThePath::MailChimpImpl.new(repo_path: repo_dir, freshness: 1)
 
 # This will do The Big Load and leave everything in the repo dir.
-impl.load_all_resources
+impl.load_all_resources()
+#impl.load_all_resources(match: "campaigns")
 #impl.cached_resource_get("campaigns", freshness: 1)
 
 #lists = impl.dump_file_data("lists", freshness: 1)
