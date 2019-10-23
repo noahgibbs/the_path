@@ -1,34 +1,35 @@
-# ThePath
+# the_path
 
-The_path is an attempt to build a simple textual DSL for bulk mailers to replace the strange and variable user interface of existing sites.
+the_path implements a simple textual DSL for bulk mailers for those who would prefer local markup files to a visual editor in the browser.
+
+As a developer/marketer, you write files in a local directory for creating series of email interactions, rather like how a static site generator like Jekyll or Middleman generates a blog.
 
 It's an experiment, not a full-featured production library.
 
+I'm building it on MailChimp. It has a *great* API, it has a
+permanent free usage tier, it's what I've personally usually used -- for those same
+reasons. You could do write a gem like this based on transactional email (e.g. MailGun or SendGrid)
+but you'd have to run a server to trigger the emails. MailChimp seems
+to be the obvious mail software in the "sweet spot" here.
+
+NOTE: Create Campaign doc page in PHP: https://isabelcastillo.com/create-send-mailchimp-campaign-api-3
+
 ## Installation
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'the_path'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
+You can install the gem manually or add it to your Gemfile.
 
     $ gem install the_path
 
+You'll also need a MailChimp API key in MAILCHIMP_API_KEY (see below.)
+
 ## Usage
 
-Initially, the_path is only compatible with MailChimp.
-
-Set up your MailChimp API key in an environment variable:
+The_path requires MailChimp. Set up your MailChimp API key in an
+environment variable:
 
     export MAILCHIMP_API_KEY=ffffffffeeeeeeffffffccccccccdddd-us2
 
-You can find your API key here if you have a MailChimp account: http://admin.mailchimp.com/account/api
+You can find your API key here after logging into your MailChimp account: http://admin.mailchimp.com/account/api
 
 ## Development
 
