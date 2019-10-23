@@ -1,0 +1,58 @@
+#!/usr/bin/env ruby
+
+require "the_path"
+
+subcommand = ARGV.unshift
+
+if subcommand == "help" || subcommand == "-h"
+  puts "To create a new repo, type 'the_path init' from an empty directory."
+  puts "  To sync to your MailChimp account, type 'the_path init' from a repository."
+  puts "  Automations not beginning with the_path emoji won't be affected."
+  puts "  But please make sure you're not overwriting more recent automations with older content!"
+  puts "  For more documentation, see https://github.com/noahgibbs/the_path"
+  exit 0
+end
+
+if subcommand == "init"
+  File.open("the_path_config.rb", "w") do |f|
+    f.print <<CONFIG
+THE_PATH = ThePath.build do
+end
+CONFIG
+  end
+  exit 0
+end
+
+if subcommand == "sync"
+  unless File.exist?("the_path_config.rb")
+    STDERR.puts "You must run the_path sync from a repository!"
+    exit -1
+  end
+
+  load "the_path_config.rb"
+
+  FileUtils.mkdir("cache") unless File.exist?("cache")
+  impl = ThePath::MailChimpImpl.new(repo_path: "cache/", freshness: 24 * 60 * 60)
+  #impl.load_all_resources()
+
+  raise "Finish implementing!"
+
+  exit 0
+end
+
+if subcommand == "backup"
+  unless File.exist?("the_path_config.rb")
+    STDERR.puts "You must run the_path sync from a repository!"
+    exit -1
+  end
+
+  FileUtils.mkdir("cache") unless File.exist?("cache")
+  impl = ThePath::MailChimpImpl.new(repo_path: "cache/", freshness: 1)
+  impl.load_all_resources()
+
+  exit 0
+end
+
+STDERR.puts "Unrecognized command: #{subcommand.inspect}!"
+STDERR.puts "  For usage instructions, type 'the_path help' or 'the_path -h'"
+exit -1
