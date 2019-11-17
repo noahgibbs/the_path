@@ -1,8 +1,25 @@
 require "the_path/version"
 
 require "fileutils"
+require "yaml"
 
 module ThePath
+    class Config
+        attr_reader :actions
+
+        def initialize(&block)
+            @actions = []
+            self.instance_eval(&block)
+        end
+
+        def default_sender(text)
+        end
+
+        def action(pathfile_contents)
+            @actions.push ::ThePath::Action.new(pathfile_contents)
+        end
+    end
+
     class MailChimpImpl
         # This isn't necessarily all MailChimp fields. Just the ones the_path is willing to look at.
         LIST_FIELDS = [:id, :web_id, :name, :contact, :permission_reminder, :use_archive_bar, :campaign_defaults, :notify_on_subscribe, :notify_on_unsubscribe, :date_created, :list_rating, :email_type_option, :subscribe_url_short, :subscribe_url_long, :beamer_address, :visibility, :double_optin, :has_welcome, :marketing_permissions, :modules, :stats]
@@ -184,6 +201,18 @@ module ThePath
             STDERR.puts "Writing to file: #{path.inspect}"
             File.open(path, "w") { |f| f.puts JSON.pretty_generate data }
             data
+        end
+    end
+
+    class Action
+        def initialize(dot_path_contents)
+            nothing,frontmatter,contents = dot_path_contents.split("---\n", 3)
+            if nothing != ""
+                raise "Error: Nothing should be before the front matter in a pathfile!"
+            end
+
+            @front_data = YAML.load(frontmatter)
+            @contents = contents
         end
     end
 end

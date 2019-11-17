@@ -17,7 +17,7 @@ end
 if subcommand == "init"
   File.open("the_path_config.rb", "w") do |f|
     f.print <<CONFIG
-THE_PATH = ThePath.build do
+THE_PATH = ThePath::Config.new do
 end
 CONFIG
   end
@@ -47,9 +47,32 @@ if subcommand == "backup"
     exit -1
   end
 
+  load "the_path_config.rb"
+
   FileUtils.mkdir("cache") unless File.exist?("cache")
   impl = ThePath::MailChimpImpl.new(repo_path: "cache/", freshness: 1)
   impl.load_all_resources()
+
+  exit 0
+end
+
+if subcommand == "peek"
+  unless File.exist?("the_path_config.rb")
+    STDERR.puts "You must run the_path backup from a repository!"
+    exit -1
+  end
+
+  load "the_path_config.rb"
+
+  impl = ThePath::MailChimpImpl.new(repo_path: "cache/", freshness: 24 * 60 * 60)
+
+  actions = Dir["*.path"].to_a.map do |pathfile|
+    THE_PATH.action(File.read pathfile)
+  end
+
+  THE_PATH.actions.each do |action|
+    STDERR.puts "Action: #{action.inspect}"
+  end
 
   exit 0
 end
