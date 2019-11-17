@@ -6,6 +6,7 @@ require "yaml"
 module ThePath
     class Config
         attr_reader :actions
+        attr_reader :sender
 
         def initialize(&block)
             @actions = []
@@ -13,10 +14,11 @@ module ThePath
         end
 
         def default_sender(text)
+            @sender = text
         end
 
         def action(pathfile_contents)
-            @actions.push ::ThePath::Action.new(pathfile_contents)
+            @actions.push ::ThePath::Action.new(self, pathfile_contents)
         end
     end
 
@@ -205,13 +207,15 @@ module ThePath
     end
 
     class Action
-        def initialize(dot_path_contents)
+        def initialize(config_object, dot_path_contents)
+            @config = config_object
             nothing,frontmatter,contents = dot_path_contents.split("---\n", 3)
             if nothing != ""
                 raise "Error: Nothing should be before the front matter in a pathfile!"
             end
 
             @front_data = YAML.load(frontmatter)
+            @sender = @front_data["sender"] || @config.sender
             @contents = contents
         end
     end
