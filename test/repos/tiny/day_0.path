@@ -1,0 +1,8 @@
+---
+identifier: rr_day_0
+template: single_column
+---
+<h2>Welcome to the Tiny Test Class!</h2>
+
+<p> The rest of the welcome text goes here... </p>
+
