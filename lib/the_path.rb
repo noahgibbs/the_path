@@ -1,4 +1,5 @@
 require "the_path/version"
+require "the_path/cmd_line"
 
 require "fileutils"
 require "yaml"
@@ -39,6 +40,10 @@ module ThePath
                 list_data = fully_load(proc { gibbon_client.lists }, :lists)
 
                 lists = list_data.map { |item| item.slice(*LIST_FIELDS) }
+                unused_fields = lists[0].keys - LIST_FIELDS
+                unless unused_fields.empty?
+                    STDERR.puts "Ignoring MailChimp fields: #{unused_fields.inspect} for lists"
+                end
                 possibly_typos = LIST_FIELDS - lists[0].keys
                 unless possibly_typos.empty?
                     STDERR.puts "May have a typo in field: #{possibly_typos.inspect} for lists"
@@ -51,6 +56,10 @@ module ThePath
                     @cached_resources["list_#{list_id}/members"] = proc do
                         members_data = fully_load(proc { gibbon_client.lists(list_id).members }, :members)
                         members_data = members_data.map { |item| item.slice(*MEMBER_FIELDS) }
+                        unused_fields = members_data[0].keys - MEMBER_FIELDS
+                        unless unused_fields.empty?
+                            STDERR.puts "Ignoring MailChimp fields: #{unused_fields.inspect} for list members"
+                        end
                         possibly_typos = MEMBER_FIELDS - members_data[0].keys
                         unless possibly_typos.empty?
                             STDERR.puts "May have a typo in field: #{possibly_typos.inspect} for members"
@@ -66,6 +75,10 @@ module ThePath
                 campaign_data = fully_load(proc { gibbon_client.campaigns }, :campaigns)
 
                 campaigns = campaign_data.map { |item| item.slice(*CAMPAIGN_FIELDS) }
+                unused_fields = campaigns[0].keys - CAMPAIGN_FIELDS
+                unless unused_fields.empty?
+                    STDERR.puts "Ignoring MailChimp fields: #{unused_fields.inspect} for campaigns"
+                end
                 possibly_typos = CAMPAIGN_FIELDS - campaigns[0].keys
                 unless possibly_typos.empty?
                     STDERR.puts "May have a typo in field: #{possibly_typos.inspect} for campaigns"
@@ -79,9 +92,13 @@ module ThePath
                         open_details_data = fully_load(proc { gibbon_client.reports(campaign_id).open_details }, :members)
                         open_details_data = open_details_data.map { |item| item.slice(*OPEN_DETAILS_FIELDS) }
                         if open_details_data.size > 0
+                            unused_fields = open_details_data[0].keys - OPEN_DETAILS_FIELDS
+                            unless unused_fields.empty?
+                                STDERR.puts "Ignoring MailChimp fields: #{unused_fields.inspect} for open_details"
+                            end
                             possibly_typos = OPEN_DETAILS_FIELDS - open_details_data[0].keys
                             unless possibly_typos.empty?
-                                STDERR.puts "May have a typo in field: #{possibly_typos.inspect} for members"
+                                STDERR.puts "May have a typo in field: #{possibly_typos.inspect} for open_details"
                             end
                         end
                         open_details_data
@@ -91,9 +108,13 @@ module ThePath
                         click_details_data = fully_load(proc { gibbon_client.reports(campaign_id).click_details }, :urls_clicked)
                         click_details_data = click_details_data.map { |item| item.slice(*CLICK_DETAILS_FIELDS) }
                         if click_details_data.size > 0
+                            unused_fields = click_details_data[0].keys - CLICK_DETAILS_FIELDS
+                            unless unused_fields.empty?
+                                STDERR.puts "Ignoring MailChimp fields: #{unused_fields.inspect} for click_details"
+                            end
                             possibly_typos = CLICK_DETAILS_FIELDS - click_details_data[0].keys
                             unless possibly_typos.empty?
-                                STDERR.puts "May have a typo in field: #{possibly_typos.inspect} for members"
+                                STDERR.puts "May have a typo in field: #{possibly_typos.inspect} for click_details"
                             end
                         end
                         click_details_data
