@@ -2,14 +2,15 @@
 
 require "the_path"
 
-subcommand = ARGV.unshift
+subcommand = ARGV.shift
 
 if subcommand == "help" || subcommand == "-h"
   puts "To create a new repo, type 'the_path init' from an empty directory."
   puts "  To sync to your MailChimp account, type 'the_path init' from a repository."
   puts "  Automations not beginning with the_path emoji won't be affected."
-  puts "  But please make sure you're not overwriting more recent automations with older content!"
-  puts "  For more documentation, see https://github.com/noahgibbs/the_path"
+  puts "  But please make sure you're not overwriting more recent automations with "
+  puts "  older content! For more documentation,"
+  puts "  see https://github.com/noahgibbs/the_path"
   exit 0
 end
 
@@ -42,7 +43,7 @@ end
 
 if subcommand == "backup"
   unless File.exist?("the_path_config.rb")
-    STDERR.puts "You must run the_path sync from a repository!"
+    STDERR.puts "You must run the_path backup from a repository!"
     exit -1
   end
 
