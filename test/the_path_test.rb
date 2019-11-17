@@ -6,5 +6,9 @@ class ThePathTest < Minitest::Test
   end
 
   def test_load_repo
+    Dir.chdir "#{__dir__}/repos/tiny" do
+        cmd = ThePath::PeekCommand.new
+        cmd.run
+    end
   end
 end

@@ -19,7 +19,7 @@ module ThePath
     def run
         File.open("the_path_config.rb", "w") do |f|
           f.print <<CONFIG
-THE_PATH = ThePath::Config.new do
+ThePath::Config.new do
 end
 CONFIG
         end
@@ -48,11 +48,12 @@ CONFIG
     def run
       impl = ThePath::MailChimpImpl.new(repo_path: "cache/", freshness: 24 * 60 * 60)
 
+      config = ThePath::Config.config_for_dir(File.expand_path(Dir.pwd))
       actions = Dir["*.path"].to_a.map do |pathfile|
-        THE_PATH.action(File.read pathfile)
+        config.action(File.read pathfile)
       end
 
-      THE_PATH.actions.each do |action|
+      config.actions.each do |action|
         STDERR.puts "Action: #{action.inspect}"
       end
     end

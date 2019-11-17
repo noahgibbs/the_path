@@ -9,9 +9,17 @@ module ThePath
         attr_reader :actions
         attr_reader :sender
 
-        def initialize(&block)
+        def initialize(dir: Dir.pwd, &block)
+            @@configurations ||= {}
+
             @actions = []
+            @dir = File.expand_path dir
+            @@configurations[@dir] = self
             self.instance_eval(&block)
+        end
+
+        def self.config_for_dir(dir)
+            @@configurations[dir]
         end
 
         def default_sender(text)
