@@ -1,0 +1,2 @@
+* Test cache refreshing, make sure data will be refreshed (only) at the right times
+* Proper test setup

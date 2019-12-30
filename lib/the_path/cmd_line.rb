@@ -11,7 +11,7 @@ module ThePath
             raise "Not in a repo for repo command #{self.class.name}!"
         end
 
-        load "the_path_config.rb"
+        ret_val = load "the_path_config.rb"
     end
   end
 
@@ -49,6 +49,13 @@ CONFIG
       impl = ThePath::MailChimpImpl.new(repo_path: "cache/", freshness: 24 * 60 * 60)
 
       config = ThePath::Config.config_for_dir(File.expand_path(Dir.pwd))
+
+
+      # TODO: match up campaigns to titles (identifiers)
+      # TODO: figure out which list to use
+
+      cached_resource_get("campaigns")
+
       actions = Dir["*.path"].to_a.map do |pathfile|
         config.action(File.read pathfile)
       end
