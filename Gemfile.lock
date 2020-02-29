@@ -16,7 +16,7 @@ GEM
     minitest (5.11.3)
     multi_json (1.13.1)
     multipart-post (2.0.0)
-    rake (10.5.0)
+    rake (13.0.1)
 
 PLATFORMS
   ruby
@@ -25,7 +25,7 @@ DEPENDENCIES
   bundler (~> 1.16)
   gibbon
   minitest (~> 5.0)
-  rake (~> 10.0)
+  rake (~> 13.0)
   the_path!
 
 BUNDLED WITH
